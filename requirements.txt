@@ -1,4 +1,4 @@
 pandas
 xlsxwriter
 openpyxl
-pyinstaller
+pyinstaller==6.3.0
