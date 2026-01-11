@@ -1,0 +1,35 @@
+name: Build Intel Mac App
+on: [push]
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Svarbu: įrašom macholib, kuri padeda tvarkyti Mac architektūras
+          pip install macholib 
+          pip install -r requirements.txt
+
+      - name: Build with PyInstaller
+        run: |
+          # Jei vėl mes klaidą, bandyk nuimti --target-arch x86_64
+          # Nes macos-14 runneris pats savaime yra Intelis
+          pyinstaller --noconsole --onefile --target-arch x86_64 --name "AttendanceReport" main.py
+        continue-on-error: false
+
+      - name: Upload Artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Intel-Mac-Attendance-App
+          path: dist/AttendanceReport
