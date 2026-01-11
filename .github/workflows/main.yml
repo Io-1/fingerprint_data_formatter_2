@@ -1,0 +1,31 @@
+name: Build Mac App
+on: [push]
+
+jobs:
+  build:
+    # Changed from macos-latest to macos-13 to target Intel CPUs
+    runs-on: macos-13  
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Build with PyInstaller
+        run: |
+          # Use your actual script name here
+          pyinstaller --noconsole --onefile --name "AttendanceReport" main.py
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Intel-Mac-Attendance-App
+          path: dist/AttendanceReport
